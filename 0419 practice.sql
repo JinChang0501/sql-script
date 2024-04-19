@@ -85,4 +85,27 @@ end boarding_place
 from passengers;
 
 
+-- p.141
+set @myname := 'Jin';
+
+select @myname; 
+
+
+select @myname = 'John', @myhome = 'Taipei';
+select @myname, @myhome;
+
+
+-- p.146 Store Procedure
+delimiter //
+create procedure select_ports()
+begin
+	select * from ports;
+end//
+delimiter ;
+
+call select_ports();
+
+
+
+
 
