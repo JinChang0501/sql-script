@@ -2,159 +2,168 @@ create database music_project;
 
 use music_project;
 
+drop database music_project;
+-- Jin
 create table members(
-member_id int primary key auto_increment,
-member_firstname varchar(50),
-member_lastname varchar(50),
-member_email varchar(50),
-member_password varchar(30),
-member_phone_number varchar(20),
-member_address varchar(50)
+id int primary key auto_increment,
+firstname varchar(50),
+lastname varchar(50),
+email varchar(50),
+passwords varchar(30),
+phone_number varchar(20),
+address varchar(50)
+);
+
+create table empolyees(
+id int primary key auto_increment,
+firstname varchar(50),
+lastname varchar(50),
+email varchar(50),
+passwords varchar(30),
+phone_number varchar(20)
 );
 
 -- paomin
-create table employees(
-employee_id int primary key auto_increment,
-employee_firstname varchar(50),
-employee_lastname varchar(50),
-employee_email varchar(50),
-employee_password varchar(30),
-employee_phone_number varchar(20)
+create table aclass (
+id int auto_increment primary key,
+class varchar(100) not null
 );
 
-CREATE TABLE activities (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    activity_class INT,
-    FOREIGN KEY (activity_class) references aclass(id),
-    activity_name VARCHAR(100) NOT NULL,
-    date DATE NOT NULL,
-    time TIME NOT NULL,
-    location VARCHAR(100) NOT NULL,
-    description TEXT,
-    organizer VARCHAR(100) NOT NULL,
-    artist_id INT,
-    FOREIGN KEY (artist_id) references artist(id)
+create table nclass (
+id int auto_increment primary key,
+class varchar(50)
 );
-
-CREATE TABLE aclass (
-id INT AUTO_INCREMENT PRIMARY KEY,
-class VARCHAR(100) NOT NULL
-);
-
-
 
 -- Ming
-
-create table login_user(
-id int not null primary key auto_increment
+create table ticket_status(
+id int primary key auto_increment,
+t_status varchar(50)
 );
-
-create table concert(
-id int not null primary key auto_increment
-);
-
-create table seat (
-id int not null primary key auto_increment,
-seat_area varchar(100) not null,
-seat_number varchar(100) not null
-);
-
-create table pay(
-id int not null primary key auto_increment,
-pay_name varchar(100) not null,
-pay_info varchar(300) not null,
-user_id int not null,
-foreign key (user_id) references login_user(id) 
-);
-
-create table music_festival_ticket(
-id int not null primary key auto_increment,
-music_festival_id int not null,
-ticket_count int not null,
-ticket_price int not null,
-foreign key (music_festival_id) references concert(id)
-);
-
-create table concert_ticket(
-id int not null primary key auto_increment,
-concert_id int not null,
-seat_id int not null,
-ticket_count int not null,
-ticket_price int not null,
-foreign key (concert_id) references concert(id),
-foreign key (seat_id) references seat(id)
-);
-
-create table music_festival_order(
-id int not null primary key auto_increment,
-user_id int not null,
-music_festival_id int not null,
-ticket_id int not null,
-pay_id int not null,
-foreign key (user_id) references login_user(id),
-foreign key (music_festival_id) references concert(id),
-foreign key (ticket_id) references music_festival_ticket(id),
-foreign key (pay_id) references pay(id)
-);
-
-create table concert_order(
-id int not null primary key auto_increment,
-user_id int not null,
-concert_id int not null,
-seat_id int not null,
-ticket_id int not null,
-pay_id int not null,
-foreign key (user_id) references login_user(id),
-foreign key (concert_id) references concert(id),
-foreign key (seat_id) references seat(id),
-foreign key (ticket_id) references concert_ticket(id),
-foreign key (pay_id) references pay(id)
-);
-
-
-
-
 
 -- Alice
-create Table order_details (
-  order_id int primary key auto_increment,
-  product_id integer,
-  unit_price int,
-  quantity int,
-  discount int,
-  created_at datetime,
-  foreign key (product_id) references products(id)  
-);
--- 商品
-create Table products (
+create table suppliers (
   id int primary key auto_increment,
-  product_name varchar(100),
-  category_id int,
-  supplier_id int,
-  unit_price int,
-  units_instock int,
-  units_on_order int,
-  discontinued varchar(50)
-);
--- 供應商
-create Table suppliers (
-  supplier_id int primary key auto_increment,
   company_name varchar(100),
   contact_name varchar(100),
   contact_title varchar(50),
   address varchar(200),
   city_or_county varchar(100),
   postal_code int,
-  country varchar(100), 
   phone int,
   fax int,
   email varchar(200)
 );
 
--- 目錄
-create table categories (
-category_id int primary key auto_increment,
-category_name varchar(100),
-descriptions varchar(200),
-picture varchar(100)
+-- Daniel
+CREATE TABLE artist(
+id INT AUTO_INCREMENT PRIMARY KEY,
+art_name varchar(50),
+followers INT,
+introduction text,
+debutDate DATETIME,
+album varchar(50),
+albumDate datetime
+);
+
+-- paomin
+create table activities (
+    id int auto_increment primary key,
+    activity_class int,
+    activity_name varchar(100) not null,
+    a_date date not null,
+    a_time time not null,
+    location varchar(100) not null,
+    descriptions text,
+    organizer varchar(100) not null,
+    artist_id int,
+    picture varchar(500),
+    foreign key (activity_class) references aclass(id),
+    foreign key (artist_id) references artist(id)
+);
+
+-- 下面是新增的
+create table banner (
+id int auto_increment primary key,
+activities_id int,
+picture varchar(200) not null,
+class varchar(100) not null,
+foreign key (activities_id) references activities(id)
+);
+
+create table notification (
+id int auto_increment primary key,
+title varchar(50) not null,
+content varchar(100) not null,
+sent_time datetime not null,
+noti_class int not null,
+foreign key (noti_class) references nclass(id)
+);
+
+
+
+create table user_notification (
+id int auto_increment primary key,
+members_id int,
+notification_id int,
+isread tinyint not null default 0,
+accept_time datetime default now(),
+foreign key (members_id) references members(id),
+foreign key (notification_id) references notification(id)
+);
+
+-- Ming
+create table ticket(
+id int not null primary key auto_increment,
+activities_id int not null,
+ticket_area varchar(50),
+counts int not null,
+price int not null,
+foreign key (activities_id) references activities(id)
+);
+
+create table ticket_order(
+id int not null primary key auto_increment,
+user_id int not null,
+ticket_id int not null,
+ticket_status int not null,
+counts int,
+foreign key (id) references ticket(id),
+foreign key (user_id) references members(id),
+foreign key (ticket_id) references ticket(id)
+);
+
+-- Alice 商品
+create table products (
+  id int not null primary key auto_increment,
+  product_name varchar(100),
+  unit_price int not null,   #單價
+  units_instock int,   #庫存
+  units_on_order int,  #被訂購的量
+  supplier_id int,
+  activitie_id int,
+  created_at datetime not null default now(), #輸入時間 
+  foreign key (supplier_id) references suppliers(id),
+  foreign key (activitie_id) references activities(id)
+);
+
+-- 訂單
+create table order_details (
+  order_id int not null primary key auto_increment,
+  product_id int not null,
+  members_id int not null,
+  unit_price int,
+  quantity int,
+  discount int,
+  created_at datetime not null default now(), #輸入時間
+  foreign key (product_id) references products(id),
+  foreign key (members_id) references members(id)
+);
+
+-- 商品收藏(連接會員?)
+create table product_collection(
+  id int not null primary key auto_increment,
+  members_id int not null,
+  product_id int not null,
+  foreign key (members_id) references members(id),  
+  foreign key (product_id) references products(id)
 );
